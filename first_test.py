@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def nos_sistema(quantidade):
     i = 0
     list = []
@@ -21,13 +20,13 @@ def elemento(lista_de_nos, no1, no2):
     dist = (x2 - x1)**2 + (y2-y1)**2
     cos = (x2 - x1)/np.sqrt(dist)
     sen = (y2 - y1)/np.sqrt(dist)
-    return sen, cos
-
-print(elemento(a, 0, 1))
-
-def making_matrix(sen, cos):
     mak = np.matrix([[cos**2, cos*sen, -(cos**2), -(cos*sen)],[cos*sen, sen**2, -(cos*sen), -(sen**2)],[-(cos**2), -(cos*sen), cos**2, cos*sen],[-(cos*sen), -(sen**2), cos*sen, sen**2]])
-    return mak
+    return [mak, no1, no2]
 
-x,y = elemento(a,0,1)
-print(making_matrix(x,y))
+
+
+maks = []
+
+maks.append(elemento(a,0,1))
+
+def grau_liberdade_elemento(lista_de_nos, no1, no2):
