@@ -1,2 +1,2 @@
-# An-lise-de-Treli-as-Planas
+# Analise-de-Trelicas-Planas
 Atividade prática supervisionada de Mecânica dos Sólidos
