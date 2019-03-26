@@ -50,4 +50,14 @@ def make_Kg(maks, n_nos):
     return big_matrix
 
 
-make_Kg(maks, 3)
+matriz_nos = make_Kg(maks, 3)
+
+def calc_iteration(b1, x2, x3, a12, a13, a11):
+    x1 = (b1-a12*x2-a13*x3)/a11
+    return x1
+
+
+def gauss_method(matriz_nos, forcas, graus_de_liberdade):
+    lista_deslocs = [0] * graus_de_liberdade
+    for i in range(graus_de_liberdade):
+        #calc_iteration(forcas[i], )               #fazer entrada de forças ser uma lista
