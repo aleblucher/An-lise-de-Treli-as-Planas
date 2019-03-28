@@ -39,18 +39,22 @@ def make_Kg(maks, n_nos):
         second = mak[1] * 2
         third = (mak[2] * 2) - 1
         fourth = mak[2] * 2
-        for line in range(first, second + 1):
-            for column in range(first, second + 1):
-                big_matrix[line - 1][column - 1] += mak[0][(line - first, column - first)]
-        for line in range(third, fourth + 1):
-            for column in range(third, fourth + 1):
-                big_matrix[line - 1][column - 1] += mak[0][(line - first, column - first)]
-        for line in range(first, second + 1):
-            for column in range(third, fourth + 1):
-                big_matrix[line - 1][column - 1] += mak[0][(line - first, column - first)]
-        for line in range(third, fourth + 1):
-            for column in range(first, second + 1):
-                big_matrix[line - 1][column - 1] += mak[0][(line - first, column - first)]
+        if third > second:
+            for line in range(first, fourth + 1):
+                for column in range(first, fourth + 1):
+                    big_matrix[line - 1][column - 1] += mak[0][(line - first, column - first)]
+        else:
+            for line in range(first, second + 1):
+                for column in range(first, second + 1):
+                    big_matrix[line - 1][column - 1] += mak[0][(line - first, column - first)]
+                for column in range(third, fourth + 1):
+                    big_matrix[line - 1][column - 1] -= mak[0][(line - first, column - first)]
+
+            for line in range(third, fourth + 1):
+                for column in range(first, second + 1):
+                    big_matrix[line - 1][column - 1] -= mak[0][(line - first, column - first)]
+                for column in range(third, fourth + 1):
+                    big_matrix[line - 1][column - 1] += mak[0][(line - first, column - first)]
 
     print("maks", maks)
     #print("maks0", maks[0])
