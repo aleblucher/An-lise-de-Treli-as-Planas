@@ -52,12 +52,39 @@ def make_Kg(maks, n_nos):
 
 matriz_nos = make_Kg(maks, 3)
 
-def calc_iteration(b1, x2, x3, a12, a13, a11):
-    x1 = (b1-a12*x2-a13*x3)/a11
-    return x1
+
+def gauss_method(matriz_nos, forcas):
+
+    lista_u = [0] * len(matriz_nos) # create the U array with zeros
+    
+    preview = lista_u[0] # start the first part of the comparisson as zero
+    tolerance = 1 # convergence parameter
+    iterations  = 0 # start a counter of iteratios (how many times until reach the real value)
+
+    while (np.abs(preview - lista_u[0]) < tolerance):
+        
+        iterations += 1
+        
+        for i in range(len(matriz_nos)):
+            
+            divisor = 0 #start our divisor (wich is matriz_nos[i][j])
+            soma = 0
+            
+            for j in range(len(matriz_nos[i])):
+                if i==j:
+                    divisor = matriz_nos[i][j]
+                else:
+                    soma+=matriz_nos[i][j]*lista_u[j]
+            preview = lista_u[0]
+            if divisor == 0:
+                lista_u[i] = 0
+            else:
+                lista_u[i] = (forcas[i]-soma)/divisor
+        print(iterations)
+        print(preview)
+        print(np.abs(preview - lista_u[0]))
+        print("AAAAAA", lista_u[0])
+    #print(lista_u)
 
 
-def gauss_method(matriz_nos, forcas, graus_de_liberdade):
-    lista_deslocs = [0] * graus_de_liberdade
-    for i in range(graus_de_liberdade):
-        #calc_iteration(forcas[i], )               #fazer entrada de forças ser uma lista
+gauss_method(matriz_nos, [1,2,3,4,5,6])
