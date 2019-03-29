@@ -94,7 +94,8 @@ def gauss_method(matriz_nos, forcas):
         #print(iterations)
         #print(preview)
         #print("AAAAAA", lista_u)
-    #print(lista_u)
+    lista_u = np.array(lista_u)*(10**-8)
+    print(lista_u)
 
 matrize_nos= [[1.59, -0.4, -0.54], [-0.4, 1.7, 0.4], [-0.54, 0.4, 0.54]]
 gauss_method(matrize_nos, [0,150,-100])
