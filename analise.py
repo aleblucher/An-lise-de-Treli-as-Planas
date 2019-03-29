@@ -2,6 +2,10 @@ import numpy as np
 import math
 from inn import readMecSol
 
+
+##### RECEIVES THE INPUTS IN ORDER TO CREATE OUR ELEMENT'S KNOTS #######
+##### RETURNS A LIST OF (X, Y) COORDINATES LISTS 
+
 def nos_sistema(dataa):
     list = []
     print(dataa['COORDINATES'])
@@ -11,6 +15,10 @@ def nos_sistema(dataa):
         y = float(dataa['COORDINATES'][i][2])
         list.append([x,y])
     return list
+
+
+########### CREATE OUR ELEMENTS ##########
+########### RETURNS A LIST WITH [ELEMENT_MATRIX, KNOT1, KNOT2]
 
 def elemento(lista_de_nos, no1, no2, area, elast, comprimento):
     prefixo = elast * area/comprimento
@@ -26,6 +34,7 @@ def elemento(lista_de_nos, no1, no2, area, elast, comprimento):
     return [k_e/(10**8), no1, no2]
 
 
+######### RETURNS THE BIG MATRIX WITH OVERLAPPED ELEMENTS
 
 def make_Kg(maks, n_nos):
     big_matrix = np.zeros((n_nos*2, n_nos*2))
@@ -50,11 +59,15 @@ def make_Kg(maks, n_nos):
                     big_matrix[line - 1][column - 1] -= mak[0][(line - first, column - first)]
                 for column in range(third, fourth + 1):
                     big_matrix[line - 1][column - 1] += mak[0][(line - first, column - first)]
-
-    # print("maks", maks)
-    # print("big", big_matrix)
-
     return big_matrix
+
+
+###### IMPLEMENTED THE GAUSS NUMERIC METHOD - RECEIVES TWO MATRIX TO FIND A THIRD ONE
+###### RETURN THE U MATRIX
+
+# | a b c |   | u1 |   | F1 |
+# | d e f | x | u2 | = | F2 |
+# | g h i |   | u3 |   | F3 |
 
 
 def gauss_method(matriz_nos, forcas):
@@ -90,6 +103,9 @@ def gauss_method(matriz_nos, forcas):
     print(lista_u)
     return lista_u
 
+
+##### 
+
 def findStrains(elast, length, lista_deslocamentos, no1, no2):
     ones = np.array([-1, 1])
     lowerUKnot = (lista_deslocamentos[((no1*2)-2)] + lista_deslocamentos[((no1*2)-1)])/2
@@ -111,12 +127,31 @@ def findStress(length, lista_deslocamentos, no1, no2):
     stress = (1/length) * np.dot(ones, lista_deslocs)
     return stress
 
+####### DEFININDO CONDICAO DE CONTORNO
+
+def boundaryConditions(matrix1, matrix2):
+    indexesToGet = []
+    for i in range(len(matrix1)):
+        if matrix1[i] != 0:
+            indexesToGet.append(i)
+
+    new_matrix = []
+    
+    for k in range(len(matrix2)):
+        reducedLine = []
+        if k in indexesToGet:
+            for j in range(len(matrix2[i])):
+                if j in indexesToGet:
+                    reducedLine.append(matrix2[i][j])
+        new_matrix.append(reducedLine)
+    return np.array(new_matrix)
+
+
 
 # lista_u = gauss_method(matrize_nos, [0,150,-100])
 
 resultInput = readMecSol("input.txt")
 
-####### DEFININDO CONDICAO DE CONTORNO
 forcas = resultInput
 print(forcas)
 a = nos_sistema(resultInput)

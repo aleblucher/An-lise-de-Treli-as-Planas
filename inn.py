@@ -40,3 +40,4 @@ def readMecSol(file_name):
             temp.append(j)
         cleaner[i] = temp
     return cleaner
+    
