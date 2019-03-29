@@ -1,11 +1,12 @@
 import numpy as np
+import math
 
 def nos_sistema(quantidade):
     i = 0
     list = []
     for i in range (quantidade):
-        x = int(input("Escreva a coordena x desse ponto: "))
-        y = int(input("Escreva a coordena y desse ponto: "))
+        x = float(input("Escreva a coordena x desse ponto: "))
+        y = float(input("Escreva a coordena y desse ponto: "))
         list.append([x,y])
     return list
 
@@ -23,13 +24,13 @@ def elemento(lista_de_nos, no1, no2, area, elast, comprimento):
     sen = (y2 - y1)/np.sqrt(dist)
     mak = np.matrix([[cos**2, cos*sen, -(cos**2), -(cos*sen)],[cos*sen, sen**2, -(cos*sen), -(sen**2)],[-(cos**2), -(cos*sen), cos**2, cos*sen],[-(cos*sen), -(sen**2), cos*sen, sen**2]])
     k_e = prefixo*mak
-    return [k_e, no1, no2]
+    return [k_e/(10**8), no1, no2]
 
 maks = []
 
-maks.append(elemento(a,1,2,1.2,0.5,10))
-maks.append(elemento(a,2,3,1.6,0.7,10))
-maks.append(elemento(a,3,1,1.6,0.7,10))
+maks.append(elemento(a,1,2,0.0002,210000000000,0.4))
+maks.append(elemento(a,2,3,0.0002,210000000000,0.3))
+maks.append(elemento(a,3,1,0.0002,210000000000,0.5))
 
 def make_Kg(maks, n_nos):
     big_matrix = np.zeros((n_nos*2, n_nos*2))
@@ -38,8 +39,17 @@ def make_Kg(maks, n_nos):
         second = mak[1] * 2
         third = (mak[2] * 2) - 1
         fourth = mak[2] * 2
-        for line in range(first, fourth + 1):
-            for column in range(first, fourth + 1):
+        for line in range(first, second + 1):
+            for column in range(first, second + 1):
+                big_matrix[line - 1][column - 1] += mak[0][(line - first, column - first)]
+        for line in range(third, fourth + 1):
+            for column in range(third, fourth + 1):
+                big_matrix[line - 1][column - 1] += mak[0][(line - first, column - first)]
+        for line in range(first, second + 1):
+            for column in range(third, fourth + 1):
+                big_matrix[line - 1][column - 1] += mak[0][(line - first, column - first)]
+        for line in range(third, fourth + 1):
+            for column in range(first, second + 1):
                 big_matrix[line - 1][column - 1] += mak[0][(line - first, column - first)]
 
     print("maks", maks)
@@ -56,35 +66,35 @@ matriz_nos = make_Kg(maks, 3)
 def gauss_method(matriz_nos, forcas):
 
     lista_u = [0] * len(matriz_nos) # create the U array with zeros
-    
-    preview = lista_u[0] # start the first part of the comparisson as zero
-    tolerance = 1 # convergence parameter
-    iterations  = 0 # start a counter of iteratios (how many times until reach the real value)
 
-    while (np.abs(preview - lista_u[0]) < tolerance):
-        
+    preview = lista_u[0] - 1 # start the first part of the comparisson as zero
+    tolerance = 0.00001 # convergence parameter
+    iterations  = 0 # start a counter of iteratios (how many times until reach the real value)
+    lista_u[0] = 1
+
+    while (np.abs(preview - lista_u[0]) > tolerance):
         iterations += 1
-        
+        preview = lista_u[0]
+
         for i in range(len(matriz_nos)):
-            
+
             divisor = 0 #start our divisor (wich is matriz_nos[i][j])
             soma = 0
-            
+
             for j in range(len(matriz_nos[i])):
                 if i==j:
                     divisor = matriz_nos[i][j]
                 else:
                     soma+=matriz_nos[i][j]*lista_u[j]
-            preview = lista_u[0]
+
             if divisor == 0:
                 lista_u[i] = 0
             else:
                 lista_u[i] = (forcas[i]-soma)/divisor
-        print(iterations)
-        print(preview)
-        print(np.abs(preview - lista_u[0]))
-        print("AAAAAA", lista_u[0])
+        #print(iterations)
+        #print(preview)
+        #print("AAAAAA", lista_u)
     #print(lista_u)
 
-
-gauss_method(matriz_nos, [1,2,3,4,5,6])
+matrize_nos= [[1.59, -0.4, -0.54], [-0.4, 1.7, 0.4], [-0.54, 0.4, 0.54]]
+gauss_method(matrize_nos, [0,150,-100])
