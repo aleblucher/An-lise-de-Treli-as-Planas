@@ -119,8 +119,12 @@ for i in range(len(livres)):
     if livres[i]==0:
         livres[i]=lista_u[j]
         j+=1
+    elif livres[i]<0:
+        livres[i]=0
 
 print(livres)
+
+print(np.transpose(livres)*matriz_nos)
 
 
 #matriz global x 
