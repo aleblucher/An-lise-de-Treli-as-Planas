@@ -101,39 +101,23 @@ def gauss_method(matriz_nos, forcas):
     print(lista_u)
     return lista_u
 
-def findStrains(elast, length, lista_deslocamentos):
+def findStrains(elast, length, lista_deslocamentos, no1, no2):
     ones = np.array([-1, 1])
-    uknot1 = (lista_deslocamentos[0] + lista_deslocamentos[1])/2
-    uknot2 = (lista_deslocamentos[2] + lista_deslocamentos[3])/2
-    uknot3 = (lista_deslocamentos[4] + lista_deslocamentos[5])/2
-    if elemento == 1:
-        lista_deslocs = [uknot1, uknot2]
+    lowerUKnot = (lista_deslocamentos[((no1*2)-2)] + lista_deslocamentos[((no1*2)-1)])/2
+    upperUKnot = (lista_deslocamentos[((no2*2)-2)] + lista_deslocamentos[((no2*2)-1)])/2
 
-    if elemento == 2:
-        lista_deslocs = [uknot2, uknot3]
+    lista_deslocs = np.array([lowerUKnot, upperUKnot])
 
-    if elemento == 3:
-        lista_deslocs = [uknot3, uknot1]
-
-    lista_deslocs = np.array(lista_deslocs)
     strain = (elast/length) * np.dot(ones, lista_deslocs)
 
 
 def findStress(length, lista_deslocamentos):
     ones = np.array([-1, 1])
-    uknot1 = (lista_deslocamentos[0] + lista_deslocamentos[1])/2
-    uknot2 = (lista_deslocamentos[2] + lista_deslocamentos[3])/2
-    uknot3 = (lista_deslocamentos[4] + lista_deslocamentos[5])/2
-    if elemento == 1:
-        lista_deslocs = [uknot1, uknot2]
+    lowerUKnot = (lista_deslocamentos[((no1*2)-2)] + lista_deslocamentos[((no1*2)-1)])/2
+    upperUKnot = (lista_deslocamentos[((no2*2)-2)] + lista_deslocamentos[((no2*2)-1)])/2
 
-    if elemento == 2:
-        lista_deslocs = [uknot2, uknot3]
+    lista_deslocs = np.array([lowerUKnot, upperUKnot])
 
-    if elemento == 3:
-        lista_deslocs = [uknot3, uknot1]
-
-    lista_deslocs = np.array(lista_deslocs)
     stress = (1/length) * np.dot(ones, lista_deslocs)
 
 
