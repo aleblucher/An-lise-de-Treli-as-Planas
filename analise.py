@@ -96,13 +96,45 @@ def gauss_method(matriz_nos, forcas):
                 lista_u[i] = 0
             else:
                 lista_u[i] = (forcas[i]-soma)/divisor
-        #print(iterations)
-        #print(preview)
-        #print("AAAAAA", lista_u)
+
     lista_u = np.array(lista_u)*(10**-8) #TODO: fix
     print(lista_u)
     return lista_u
 
+def findStrains(elast, length, lista_deslocamentos):
+    ones = np.array([-1, 1])
+    uknot1 = (lista_deslocamentos[0] + lista_deslocamentos[1])/2
+    uknot2 = (lista_deslocamentos[2] + lista_deslocamentos[3])/2
+    uknot3 = (lista_deslocamentos[4] + lista_deslocamentos[5])/2
+    if elemento == 1:
+        lista_deslocs = [uknot1, uknot2]
+
+    if elemento == 2:
+        lista_deslocs = [uknot2, uknot3]
+
+    if elemento == 3:
+        lista_deslocs = [uknot3, uknot1]
+
+    lista_deslocs = np.array(lista_deslocs)
+    strain = (elast/length) * np.dot(ones, lista_deslocs)
+
+
+def findStress(length, lista_deslocamentos):
+    ones = np.array([-1, 1])
+    uknot1 = (lista_deslocamentos[0] + lista_deslocamentos[1])/2
+    uknot2 = (lista_deslocamentos[2] + lista_deslocamentos[3])/2
+    uknot3 = (lista_deslocamentos[4] + lista_deslocamentos[5])/2
+    if elemento == 1:
+        lista_deslocs = [uknot1, uknot2]
+
+    if elemento == 2:
+        lista_deslocs = [uknot2, uknot3]
+
+    if elemento == 3:
+        lista_deslocs = [uknot3, uknot1]
+
+    lista_deslocs = np.array(lista_deslocs)
+    stress = (1/length) * np.dot(ones, lista_deslocs)
 
 
 matrize_nos= [[1.59, -0.4, -0.54], [-0.4, 1.7, 0.4], [-0.54, 0.4, 0.54]]
@@ -125,6 +157,3 @@ for i in range(len(livres)):
 print(livres)
 
 print(np.transpose(livres)*matriz_nos)
-
-
-#matriz global x 
