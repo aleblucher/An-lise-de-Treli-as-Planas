@@ -111,7 +111,7 @@ def findStrains(elast, length, lista_deslocamentos, no1, no2):
     strain = (elast/length) * np.dot(ones, lista_deslocs)
 
 
-def findStress(length, lista_deslocamentos):
+def findStress(length, lista_deslocamentos, no1, no2):
     ones = np.array([-1, 1])
     lowerUKnot = (lista_deslocamentos[((no1*2)-2)] + lista_deslocamentos[((no1*2)-1)])/2
     upperUKnot = (lista_deslocamentos[((no2*2)-2)] + lista_deslocamentos[((no2*2)-1)])/2
