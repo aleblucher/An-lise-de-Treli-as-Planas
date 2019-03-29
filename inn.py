@@ -26,6 +26,7 @@ def readMecSol(file_name):
         if "*" in i: #search for block tags
             tags.append(file.index(i))
         clean.append(i.strip())
+    print(tags)
 
     cleaner = {}
 

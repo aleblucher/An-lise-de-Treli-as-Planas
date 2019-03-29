@@ -2,17 +2,15 @@ import numpy as np
 import math
 from inn import readMecSol
 
-def nos_sistema(quantidade):
-    i = 0
+def nos_sistema(dataa):
     list = []
-    for i in range (quantidade):
-        x = float(input("Escreva a coordena x desse ponto: "))
-        y = float(input("Escreva a coordena y desse ponto: "))
+    print(dataa['COORDINATES'])
+    for i in range(1,len(dataa['COORDINATES'])):
+        print(dataa['COORDINATES'][i])
+        x = float(dataa['COORDINATES'][i][1])
+        y = float(dataa['COORDINATES'][i][2])
         list.append([x,y])
     return list
-
-a = nos_sistema(3)
-print(a)
 
 def elemento(lista_de_nos, no1, no2, area, elast, comprimento):
     prefixo = elast * area/comprimento
@@ -27,11 +25,7 @@ def elemento(lista_de_nos, no1, no2, area, elast, comprimento):
     k_e = prefixo*mak
     return [k_e/(10**8), no1, no2]
 
-maks = []
 
-maks.append(elemento(a,1,2,0.0002,210000000000,0.4))
-maks.append(elemento(a,2,3,0.0002,210000000000,0.3))
-maks.append(elemento(a,3,1,0.0002,210000000000,0.5))
 
 def make_Kg(maks, n_nos):
     big_matrix = np.zeros((n_nos*2, n_nos*2))
@@ -57,15 +51,10 @@ def make_Kg(maks, n_nos):
                 for column in range(third, fourth + 1):
                     big_matrix[line - 1][column - 1] += mak[0][(line - first, column - first)]
 
-    print("maks", maks)
-    #print("maks0", maks[0])
-    #print("maks00", maks[0][0][(0,0)])
-    print("big", big_matrix)
+    # print("maks", maks)
+    # print("big", big_matrix)
 
     return big_matrix
-
-
-matriz_nos = make_Kg(maks, 3)
 
 
 def gauss_method(matriz_nos, forcas):
@@ -109,6 +98,7 @@ def findStrains(elast, length, lista_deslocamentos, no1, no2):
     lista_deslocs = np.array([lowerUKnot, upperUKnot])
 
     strain = (elast/length) * np.dot(ones, lista_deslocs)
+    return strain
 
 
 def findStress(length, lista_deslocamentos, no1, no2):
@@ -119,14 +109,34 @@ def findStress(length, lista_deslocamentos, no1, no2):
     lista_deslocs = np.array([lowerUKnot, upperUKnot])
 
     stress = (1/length) * np.dot(ones, lista_deslocs)
+    return stress
 
 
-matrize_nos= [[1.59, -0.4, -0.54], [-0.4, 1.7, 0.4], [-0.54, 0.4, 0.54]]
-lista_u = gauss_method(matrize_nos, [0,150,-100])
+# lista_u = gauss_method(matrize_nos, [0,150,-100])
+
 resultInput = readMecSol("input.txt")
 
+####### DEFININDO CONDICAO DE CONTORNO
+forcas = resultInput
+print(forcas)
+a = nos_sistema(resultInput)
+
+print(a)
+
+maks = []
+
+maks.append(elemento(a,1,2,0.0002,210000000000,0.4))
+maks.append(elemento(a,2,3,0.0002,210000000000,0.3))
+maks.append(elemento(a,3,1,0.0002,210000000000,0.5))
+
+matriz_nos_elementos = make_Kg(maks, 3)
+print( "AAAAAAAA", matriz_nos)
+
+
+lista_u = gauss_method(matrize_nos, forcas)
 
 livres = np.zeros(2*int(resultInput['COORDINATES'][0][0]))
+
 for i in range(1,len(resultInput['BCNODES'])):
     livres[int(((resultInput['BCNODES'][i][0]-1)*2) + (resultInput['BCNODES'][i][1]-1))]=-1
 print(livres[0])
@@ -137,7 +147,3 @@ for i in range(len(livres)):
         j+=1
     elif livres[i]<0:
         livres[i]=0
-
-print(livres)
-
-print(np.transpose(livres)*matriz_nos)
