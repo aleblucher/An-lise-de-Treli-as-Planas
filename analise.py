@@ -101,9 +101,26 @@ def gauss_method(matriz_nos, forcas):
         #print("AAAAAA", lista_u)
     lista_u = np.array(lista_u)*(10**-8) #TODO: fix
     print(lista_u)
+    return lista_u
 
 
 
 matrize_nos= [[1.59, -0.4, -0.54], [-0.4, 1.7, 0.4], [-0.54, 0.4, 0.54]]
-gauss_method(matrize_nos, [0,150,-100])
-print(readMecSol("input.txt")['BCNODES'])
+lista_u = gauss_method(matrize_nos, [0,150,-100])
+resultInput = readMecSol("input.txt")
+
+
+livres = np.zeros(2*int(resultInput['COORDINATES'][0][0]))
+for i in range(1,len(resultInput['BCNODES'])):
+    livres[int(((resultInput['BCNODES'][i][0]-1)*2) + (resultInput['BCNODES'][i][1]-1))]=-1
+print(livres[0])
+j=0
+for i in range(len(livres)):
+    if livres[i]==0:
+        livres[i]=lista_u[j]
+        j+=1
+
+print(livres)
+
+
+#matriz global x 
