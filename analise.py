@@ -148,7 +148,7 @@ def boundaryConditions(matrix1, matrix2):
 
 # lista_u = gauss_method(matrize_nos, [0,150,-100])
 
-resultInput = readMecSol("input.txt")
+resultInput = readMecSol("input.1.txt")
 
 forcas = resultInput
 incidences = resultInput['INCIDENCES']
@@ -159,8 +159,21 @@ a = nos_sistema(resultInput)
 
 maks = []
 
+print(incidences)
+print(materials)
+
 for i in range(len(incidences)):
-    maks.append(elemento(a, incidences[i][1], incidences[i][2], area[5], materials[i][0], materials[i][2]))
+    print(i)
+    print(incidences[i][1])
+    print(incidences[i][2])
+    print( materials[i])
+    maks.append(elemento(a, int(incidences[i][1]), int(incidences[i][2]),
+     area[0],
+      int(materials[i+1][0]),
+
+
+
+       int(materials[i+1][2])))
 
 # maks.append(elemento(a,1,2,0.0002,210000000000,0.4))
 # maks.append(elemento(a,2,3,0.0002,210000000000,0.3))
