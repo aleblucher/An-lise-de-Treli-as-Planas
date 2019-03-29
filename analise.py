@@ -8,9 +8,7 @@ from inn import readMecSol
 
 def nos_sistema(dataa):
     list = []
-    print(dataa['COORDINATES'])
     for i in range(1,len(dataa['COORDINATES'])):
-        print(dataa['COORDINATES'][i])
         x = float(dataa['COORDINATES'][i][1])
         y = float(dataa['COORDINATES'][i][2])
         list.append([x,y])
@@ -153,32 +151,36 @@ def boundaryConditions(matrix1, matrix2):
 resultInput = readMecSol("input.txt")
 
 forcas = resultInput
-print(forcas)
-a = nos_sistema(resultInput)
+incidences = resultInput['INCIDENCES']
+area = resultInput['GEOMETRIC_PROPERTIES']
+materials = resultInput['MATERIALS']
 
-print(a)
+a = nos_sistema(resultInput)
 
 maks = []
 
-maks.append(elemento(a,1,2,0.0002,210000000000,0.4))
-maks.append(elemento(a,2,3,0.0002,210000000000,0.3))
-maks.append(elemento(a,3,1,0.0002,210000000000,0.5))
+for i in range(len(incidences)):
+    maks.append(elemento(a, incidences[i][1], incidences[i][2], area[5], materials[i][0], materials[i][2]))
 
-matriz_nos_elementos = make_Kg(maks, 3)
-print( "AAAAAAAA", matriz_nos)
+# maks.append(elemento(a,1,2,0.0002,210000000000,0.4))
+# maks.append(elemento(a,2,3,0.0002,210000000000,0.3))
+# maks.append(elemento(a,3,1,0.0002,210000000000,0.5))
+
+# matriz_nos_elementos = make_Kg(maks, 3)
+# print( "AAAAAAAA", matriz_nos)
 
 
-lista_u = gauss_method(matrize_nos, forcas)
+# lista_u = gauss_method(matrize_nos, forcas)
 
-livres = np.zeros(2*int(resultInput['COORDINATES'][0][0]))
+# livres = np.zeros(2*int(resultInput['COORDINATES'][0][0]))
 
-for i in range(1,len(resultInput['BCNODES'])):
-    livres[int(((resultInput['BCNODES'][i][0]-1)*2) + (resultInput['BCNODES'][i][1]-1))]=-1
-print(livres[0])
-j=0
-for i in range(len(livres)):
-    if livres[i]==0:
-        livres[i]=lista_u[j]
-        j+=1
-    elif livres[i]<0:
-        livres[i]=0
+# for i in range(1,len(resultInput['BCNODES'])):
+#     livres[int(((resultInput['BCNODES'][i][0]-1)*2) + (resultInput['BCNODES'][i][1]-1))]=-1
+# print(livres[0])
+# j=0
+# for i in range(len(livres)):
+#     if livres[i]==0:
+#         livres[i]=lista_u[j]
+#         j+=1
+#     elif livres[i]<0:
+#         livres[i]=0
