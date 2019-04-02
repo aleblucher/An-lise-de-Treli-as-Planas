@@ -14,16 +14,26 @@ def nos_sistema(dataa):
         list.append([x,y])
     return list
 
+def is_number(s): #test if a string is a number
+        try:
+            float(s)
+            return True
+        except ValueError:
+            pass
+
+        try:
+            import unicodedata
+            unicodedata.numeric(s)
+            return True
+        except (TypeError, ValueError):
+            pass
+
+        return False
 
 ########### CREATE OUR ELEMENTS ##########
 ########### RETURNS A LIST WITH [ELEMENT_MATRIX, KNOT1, KNOT2]
 
-def elemento(lista_de_nos, no1, no2, area, elast, comprimento):
-    prefixo = elast * area/comprimento
-    x1 = lista_de_nos[no1 - 1][0]
-    y1 = lista_de_nos[no1 - 1][1]
-    x2 = lista_de_nos[no2 - 1][0]
-    y2 = lista_de_nos[no2 - 1][1]
+def elemento(x1,y1,x2,y2, prefixo, no1,no2):
     dist = (x2 - x1)**2 + (y2-y1)**2
     cos = (x2 - x1)/np.sqrt(dist)
     sen = (y2 - y1)/np.sqrt(dist)
@@ -69,6 +79,8 @@ def make_Kg(maks, n_nos):
 
 
 def gauss_method(matriz_nos, forcas):
+    #print(matriz_nos)
+    #print(forcas)
 
     lista_u = [0] * len(matriz_nos) # create the U array with zeros
 
@@ -80,9 +92,7 @@ def gauss_method(matriz_nos, forcas):
     while (np.abs(preview - lista_u[0]) > tolerance):
         iterations += 1
         preview = lista_u[0]
-
         for i in range(len(matriz_nos)):
-
             divisor = 0 #start our divisor (wich is matriz_nos[i][j])
             soma = 0
 
@@ -98,7 +108,6 @@ def gauss_method(matriz_nos, forcas):
                 lista_u[i] = (forcas[i]-soma)/divisor
 
     lista_u = np.array(lista_u)*(10**-8) #TODO: fix
-    print(lista_u)
     return lista_u
 
 
@@ -150,7 +159,7 @@ def boundaryConditions(matrix1, matrix2):
 
 resultInput = readMecSol("input.1.txt")
 
-forcas = resultInput
+forcas = resultInput['LOADS']
 incidences = resultInput['INCIDENCES']
 area = resultInput['GEOMETRIC_PROPERTIES']
 materials = resultInput['MATERIALS']
@@ -158,42 +167,35 @@ materials = resultInput['MATERIALS']
 a = nos_sistema(resultInput)
 
 maks = []
-
-print(incidences)
-print(materials)
-
+counter = 1
 for i in range(len(incidences)):
-    print(i)
-    print(incidences[i][1])
-    print(incidences[i][2])
-    print( materials[i])
-    maks.append(elemento(a, int(incidences[i][1]), int(incidences[i][2]),
-     area[0],
-      int(materials[i+1][0]),
+    counter += 1
+    no1 = int(incidences[i][1])
+    no2 = int(incidences[i][2])
+    x1 =  a[no1 - 1][0] #lista_de_nos[no1 - 1][0] ->
+    y1 =  a[no1 - 1][1] #lista_de_nos[no1 - 1][1] ->
+    x2 =  a[no2 - 1][0] # lista_de_nos[no2 - 1][0] ->
+    y2 =  a[no2 - 1][1] #lista_de_nos[no2 - 1][1] ->
+    divv = area[0][0]/int(materials[i+1][2])
+    prefixo = int(materials[i+1][0]) * divv
+    maks.append(elemento(x1,y1,x2,y2, prefixo, no1, no2))
 
 
+livres = np.zeros(2*int(resultInput['COORDINATES'][0][0]))
 
-       int(materials[i+1][2])))
-
-# maks.append(elemento(a,1,2,0.0002,210000000000,0.4))
-# maks.append(elemento(a,2,3,0.0002,210000000000,0.3))
-# maks.append(elemento(a,3,1,0.0002,210000000000,0.5))
-
-# matriz_nos_elementos = make_Kg(maks, 3)
-# print( "AAAAAAAA", matriz_nos)
+for i in range(1,len(resultInput['BCNODES'])):
+    livres[int(((resultInput['BCNODES'][i][0]-1)*2) + (resultInput['BCNODES'][i][1]-1))]=-1
+for i in range(1,len(forcas)):
+    livres[int(((resultInput['LOADS'][i][0]-1)*2) + (resultInput['LOADS'][i][1]-1))]=resultInput['LOADS'][i][2]
 
 
-# lista_u = gauss_method(matrize_nos, forcas)
+livres = [int(x) for x in livres if x != -1 ]
 
-# livres = np.zeros(2*int(resultInput['COORDINATES'][0][0]))
 
-# for i in range(1,len(resultInput['BCNODES'])):
-#     livres[int(((resultInput['BCNODES'][i][0]-1)*2) + (resultInput['BCNODES'][i][1]-1))]=-1
-# print(livres[0])
-# j=0
-# for i in range(len(livres)):
-#     if livres[i]==0:
-#         livres[i]=lista_u[j]
-#         j+=1
-#     elif livres[i]<0:
-#         livres[i]=0
+matriz_nos_elementos = make_Kg(maks, counter)
+
+print(len(maks))
+print(matriz_nos_elementos)
+
+lista_u = gauss_method(matriz_nos_elementos, livres)
+
